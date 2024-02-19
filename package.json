@@ -1,0 +1,27 @@
+{
+  "name": "ifpe-portalegressos-front",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "file-saver": "^2.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "next": "14.0.1",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-router-dom": "^6.18.0",
+    "react-select": "^5.8.0",
+    "sweetalert2": "^11.10.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0"
+  }
+}
