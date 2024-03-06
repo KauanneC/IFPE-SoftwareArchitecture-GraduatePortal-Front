@@ -74,8 +74,9 @@ export default function Login() {
             };
 
             const response = await authenticate(data);
-
+            
             if (response && response.statusCode === 200) {
+                console.log('response:', response);
                 const token = response.data.token;
 
                 localStorage.setItem('token', token);
@@ -91,10 +92,8 @@ export default function Login() {
                     setLoading(false);
                     if (result.isConfirmed) {
                         const decoded = jwt.decode(token);
-                        console.log(decoded);
-                        console.log(decoded.profile);
-                        console.log(decoded.primaryAcess);
                         if (decoded) {
+                            console.log('decoded:', decoded)
                             let redirectPath = '';
                             if (decoded.profile === 'coordinator' || decoded.profile === 'egress' || decoded.profile === 'teacher') {
                                 if (decoded.primaryAcess === true) {

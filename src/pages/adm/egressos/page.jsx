@@ -19,28 +19,37 @@ export default function egressos() {
     const [coordinator, setCoordinator] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedProfile, setSelectedProfile] = useState("egress");
+    const [token, setToken] = useState(null);
 
     useEffect(() => {
-        getUsersByProfile("egress").then((data) => {
-            setEgress(data.data.users);
-            setLoading(false);
-        });
-    }, []);
+        localStorage.getItem("token") && setToken(localStorage.getItem("token"));
+        if (token) {
+            getUsersByProfile("egress", 1, token).then(({data}) => {
+                setEgress(data.users);
+                setLoading(false);
+            });
+        }
+    }, [token]);
+    
+    useEffect(() => {
+        localStorage.getItem("token") && setToken(localStorage.getItem("token"));
+        if (token) {
+            getUsersByProfile("teacher", 1, token).then(({data}) => {
+                setTeacher(data.users);
+                setLoading(false);
+            });;
+        }
+    }, [token]);
 
     useEffect(() => {
-        getUsersByProfile("teacher").then((data) => {
-            setTeacher(data.data.users);
-            setLoading(false);
-        });;
-    }, []);
-
-    useEffect(() => {
-        getUsersByProfile("coordinator").then((data) => {
-            setCoordinator(data.data.users);
-            setLoading(false);
-        });
-    }, []);
-
+        localStorage.getItem("token") && setToken(localStorage.getItem("token"));
+        if (token) {
+            getUsersByProfile("coordinator", 1, token).then(({data}) => {
+                setCoordinator(data.users);
+                setLoading(false);
+            });
+        }
+    }, [token]);
 
     const handleProfileFilter = (profile) => {
         setSelectedProfile(profile);

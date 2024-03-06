@@ -22,6 +22,7 @@ export default function allEvents() {
     const [cancelPopupOpen, setCancelPopupOpen] = useState(false);
     const [id, setId] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState(null);
 
     useEffect(() => {
         getEvents().then((data) => {
@@ -41,17 +42,22 @@ export default function allEvents() {
     };
 
     const handleEnviarClick = (id, eventData) => {
-        updateEvents(id, eventData)
-            .then((response) => {
-                if (response.statusCode === 200) {
-                    setSucessPopupOpen(true);
-                } else {
-                    alert("Erro ao atualizar o usuário!")
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        const token = localStorage.getItem("token");
+        if (token) {
+            updateEvents(id, eventData, token)
+                .then((response) => {
+                    if (response.statusCode === 200) {
+                        setSucessPopupOpen(true);
+                    } else {
+                        alert("Erro ao atualizar o evento!")
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            console.error("Token não encontrado");
+        }
     };
 
     function handleOpenDeletePopup(id) {
@@ -74,18 +80,23 @@ export default function allEvents() {
     const handleDeleteClick = (id) => {
         setDeletePopup(false);
         setLoading(true);
-        removeEvents(id)
-            .then((response) => {
-                if (response.statusCode === 200) {
-                    setLoading(false);
-                    setDeleteSucessPopup(true);
-                } else {
-                    alert("Erro ao excluir os usuários!")
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        const token = localStorage.getItem("token");
+        if (token) {
+            removeEvents(id, token)
+                .then((response) => {
+                    if (response.statusCode === 200) {
+                        setLoading(false);
+                        setDeleteSucessPopup(true);
+                    } else {
+                        alert("Erro ao excluir os usuários!")
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else (
+            console.error("Token não encontrado")
+        )
     };
 
     function autoExpandTextArea(element) {

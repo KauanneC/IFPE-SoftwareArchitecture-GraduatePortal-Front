@@ -4,12 +4,13 @@ const api = axios.create({  // Fixo
     baseURL: "http://localhost:8000/api/forms",
 });
 
-export async function createFields(data) { // POST
+export async function createFields(data, token) { // POST
     try {
         const response = await api.post('http://localhost:8000/api/forms', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
         const statusCode = response.status;
@@ -26,12 +27,13 @@ export async function createFields(data) { // POST
     }
 }
 
-export async function getAllFormFields(formType) {
+export async function getAllFormFields(formType, token) {
     try {
         const response = await api.get(`/${formType}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
         const statusCode = response.status;
@@ -48,12 +50,13 @@ export async function getAllFormFields(formType) {
     }
 }
 
-export async function removeFormFields(id) {
+export async function removeFormFields(id, token) {
     try {
         const response = await api.delete(`/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
         const statusCode = response.status;

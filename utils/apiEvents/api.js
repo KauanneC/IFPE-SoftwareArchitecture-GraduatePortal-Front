@@ -4,12 +4,13 @@ const api = axios.create({  // Fixo
     baseURL: "http://localhost:8000/api/events",
 });
 
-export async function createEvents(data) { // POST
+export async function createEvents(data,token) { // POST
     try {
         const response = await api.post('', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'aplication/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
         const statusCode = response.status;
@@ -39,9 +40,13 @@ export async function getEvents() { // GET
     }
 }
 
-export async function updateEvents(id, data) {  // PUT
+export async function updateEvents(id, data, token) {  // PUT
     try {
-        const response = await api.put(`/${id}`, data);
+        const response = await api.put(`/${id}`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
         const statusCode = response.status;
         const responseData = response.data;
         return { statusCode, data: responseData };
@@ -51,9 +56,13 @@ export async function updateEvents(id, data) {  // PUT
     }
 }
 
-export async function removeEvents(id) { // DELETE
+export async function removeEvents(id, token) { // DELETE
     try {
-        const response = await api.delete(`/${id}`);
+        const response = await api.delete(`/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
         const statusCode = response.status;
         const mensagem = response.data.msg;
         return { statusCode, mensagem };

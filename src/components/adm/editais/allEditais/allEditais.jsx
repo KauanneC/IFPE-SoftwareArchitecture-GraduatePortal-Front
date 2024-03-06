@@ -14,7 +14,7 @@ import iconFile from "/public/icons/iconFile.svg"
 import Popup from "@/components/popUp/popup";
 
 // API
-import { removeNotice, getNotice } from "../../../../../utils/apiNotice/api";
+import { removeNotice, getNotice, configHeaders } from "../../../../../utils/apiNotice/api";
 
 export default function allEditais() {
     const [notices, setNotices] = useState([]);
@@ -25,6 +25,7 @@ export default function allEditais() {
     const [id, setId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [loader, setLoader] = useState(true);
+    const [token, setToken] = useState(null);
 
     useEffect(() => {
         getNotice().then((data) => {
@@ -53,19 +54,24 @@ export default function allEditais() {
     const handleDeleteClick = (id) => {
         setDeletePopup(false);
         setLoading(true);
-        removeNotice(id)
-            .then((response) => {
-                if (response.statusCode === 200) {
-                    setLoading(false);
-                    setDeleteSucessPopup(true);
-                } else {
-                    alert("Erro ao excluir os usuários!")
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    };
+        const token = localStorage.getItem("token");
+        if (token) {
+            removeNotice(id, token)
+                .then((response) => {
+                    if (response.statusCode === 200) {
+                        setLoading(false);
+                        setDeleteSucessPopup(true);
+                    } else {
+                        alert("Erro ao excluir o edital!")
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            console.error("Token não encontrado");
+        }
+    }; 
 
 
     const handleReload = () => {

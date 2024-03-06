@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,6 +21,11 @@ export default function AddEvento() {
     const [warningsPopupOpen, setWarningsPopupOpen] = useState(false);
     const [warnings, setWarnings] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState(null);
+
+    useEffect(() => {
+        localStorage.getItem("token") && setToken(localStorage.getItem("token"));
+    },[])
 
     const [eventos, setEventos] = useState({
         name: "",
@@ -79,7 +84,7 @@ export default function AddEvento() {
         } else {
             setPopupOpen(false);
             setLoading(true);
-            createEvents(eventos)
+            createEvents(eventos,token)
                 .then((response) => {
                     if (response.statusCode === 200) {
                         setLoading(false);
