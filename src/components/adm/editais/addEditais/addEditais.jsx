@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -23,6 +23,11 @@ export default function AddEditais() {
     const [warningsPopupOpen, setWarningsPopupOpen] = useState(false);
     const [warnings, setWarnings] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState(null);
+
+    useEffect(() => {
+        localStorage.getItem("token") && setToken(localStorage.getItem("token"));
+    },[])
 
     const [editais, setEdiatis] = useState({
         title: "",
@@ -65,7 +70,7 @@ export default function AddEditais() {
     
             setLoading(true)
             setPopupOpen(false)
-            createNotice(formData)
+            createNotice(formData, token)
                 .then((response) => {
                     if (response.statusCode === 201) {
                         setLoading(false);

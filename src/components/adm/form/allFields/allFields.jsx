@@ -22,11 +22,12 @@ export default function AllFields({ formType, hasFields, setHasFields }) {
     const [id, setId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [loader, setLoader] = useState(true);
-
+    const [token, setToken] = useState(null);
 
     useEffect(() => {
+        localStorage.getItem("token") && setToken(localStorage.getItem("token"));
         if (hasFields) {
-            getAllFormFields(formType).then((response) => {
+            getAllFormFields(formType, token).then((response) => {
                 setFields(response || []);
                 setLoader(false);
                 console.log(fields);
@@ -37,19 +38,24 @@ export default function AllFields({ formType, hasFields, setHasFields }) {
     const handleDeleteClick = (id) => {
         setWarningPopup(false);
         setLoading(true);
-        removeFormFields(id)
-            .then((response) => {
-                if (response.statusCode === 200) {
-                    setLoading(false);
-                    setWarningPopup(false);
-                    setSucessDeletPopup(true);
-                } else {
-                    alert("Erro ao deletar campo!");
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        const token = localStorage.getItem("token");
+        if (token) {
+            removeFormFields(id, token)
+                .then((response) => {
+                    if (response.statusCode === 200) {
+                        setLoading(false);
+                        setWarningPopup(false);
+                        setSucessDeletPopup(true);
+                    } else {
+                        alert("Erro ao deletar campo!");
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            console.error("Token não encontrado");
+        }
     };
 
     function handleOpenDeletePopup(id) {

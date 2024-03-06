@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 // Icons
@@ -28,6 +28,11 @@ export default function AddCampo({ props }) {
     const [warningsPopupOpen, setWarningsPopupOpen] = useState(false);
     const [warnings, setWarnings] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState(null);
+
+    useEffect(() => {
+        localStorage.getItem("token") && setToken(localStorage.getItem("token"));
+    },[]);
 
     const [dados, setDados] = useState({
         formType: props,
@@ -103,19 +108,24 @@ export default function AddCampo({ props }) {
             setWarningsPopupOpen(true);
         } else {
             setLoading(true);
-            createFields(dados)
-                .then((response) => {
-                    if (response.statusCode === 200) {
-                        setLoading(false);
-                        setSucessPopup(true)
-                    } else {
-                        setLoading(false);
-                        setErrorPopupOpen(true);
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+            const token = localStorage.getItem("token");
+            if (token) {
+                createFields(dados, token)
+                    .then((response) => {
+                        if (response.statusCode === 200) {
+                            setLoading(false);
+                            setSucessPopup(true)
+                        } else {
+                            setLoading(false);
+                            setErrorPopupOpen(true);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            } else {
+                console.error("Token não encontrado");
+            }
         }
     };
 

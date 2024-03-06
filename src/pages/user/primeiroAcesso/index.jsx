@@ -82,6 +82,7 @@ export default function PrimeiroAcesso() {
         // define a rota de acordo com o tipo de usuário
         const user = localStorage.getItem('token');
         const decodedToken = jwt.decode(user);
+        console.log(decodedToken)
         if (decodedToken && decodedToken.profile === "egress") {
             router.push("/egresso/home");
         } else if (decodedToken && decodedToken.profile === "teacher") {

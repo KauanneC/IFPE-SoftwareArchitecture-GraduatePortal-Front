@@ -4,12 +4,13 @@ const api = axios.create({  // Fixo
     baseURL: "http://localhost:8000/api/user",
 });
 
-export async function createUser(data) {
+export async function createUser(data, token) {
     try {
         const response = await api.post('', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -28,12 +29,13 @@ export async function createUser(data) {
     }
 }
 
-export async function getUserByEmail(email) {
+export async function getUserByEmail(email, token) {
     try {
         const response = await api.get(`/${email}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -52,12 +54,13 @@ export async function getUserByEmail(email) {
     }
 }
 
-export async function removeUser(id) {
+export async function removeUser(id, token) {
     try {
         const response = await api.delete(`/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -78,18 +81,21 @@ export async function removeUser(id) {
     }
 }
 
-export async function getUsersByProfile(profile, page = 1) {
+export async function getUsersByProfile(profile, page = 1, token) {
     try {
         const response = await api.get(`/${profile}/${page}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
         const statusCode = response.status;
+        const data = response.data;
         console.log('statusCode:', statusCode);
-        return { statusCode, data: response.data };
+        console.log('data:', data)
+        return { statusCode, data};
     } catch (error) {
         console.error('Erro na requisição:', error);
 

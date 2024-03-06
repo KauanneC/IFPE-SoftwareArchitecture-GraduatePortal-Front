@@ -1,14 +1,18 @@
 import axios from 'axios';
 
 const api = axios.create({  // Fixo
-    baseURL: "http://localhost:8000/api/notice",
+    baseURL: "http://localhost:8000/api",
 });
 
-export async function createNotice(data) {
+export async function createNotice(data, token) {
     console.log(data)
 
     try {
-        const response = await api.post('', data);
+        const response = await api.post('/notice', data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
         const statusCode = response.status;
         console.log('statusCode:', statusCode);
         return { statusCode };
@@ -26,7 +30,7 @@ export async function createNotice(data) {
 
 export async function getNotice() { 
     try {
-        const response = await api.get(" ", {
+        const response = await api.get("/notice", {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -41,9 +45,13 @@ export async function getNotice() {
     }
 }
 
-export async function removeNotice(id) { 
+export async function removeNotice(id, token) { 
     try {
-        const response = await api.delete(`/${id}`);
+        const response = await api.delete(`/notice/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
         const statusCode = response.status;
         const mensagem = response.data.msg;
         return { statusCode, mensagem };

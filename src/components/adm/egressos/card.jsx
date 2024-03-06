@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 // Icons
@@ -23,18 +23,23 @@ export default function card({ name, profile, id }) {
     const handleDeleteClick = (id) => {
         setLoading(true);
         setDeletePopup(false);
-        removeUser(id)
-            .then((response) => {
-                if (response.statusCode === 200) {
-                    setLoading(false);
-                    setDeleteSucessPopup(true);
-                } else {
-                    alert("Erro ao excluir os usuários!")
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        const token = localStorage.getItem("token");
+        if (token) {
+            removeUser(id, token)
+                .then((response) => {
+                    if (response.statusCode === 200) {
+                        setLoading(false);
+                        setDeleteSucessPopup(true);
+                    } else {
+                        alert("Erro ao excluir os usuários!")
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            console.error("Token não encontrado");
+        };
     };
 
     const handleOpenDelete = () => {
