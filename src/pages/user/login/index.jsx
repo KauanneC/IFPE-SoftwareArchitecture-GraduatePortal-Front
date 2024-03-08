@@ -12,6 +12,9 @@ import IconUser from "/public/icons/iconUser.svg";
 import IconSenha from "/public/icons/iconSenha.svg";
 import IconSee from "/public/icons/iconSee.svg";
 import IconUnsee from "/public/icons/iconUnsee.svg";
+import iconSucess from "/public/icons/iconSucess.svg"
+import iconError from "/public/icons/iconError.svg"
+import Popup from "@/components/popUp/popup";
 
 // API
 import { authenticate } from "../../../../utils/apiLogin/api";
@@ -22,6 +25,8 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [sucessPopupOpen, setSucessPopupOpen] = useState(false);
+    const [errorPopupOpen, setErrorPopupOpen] = useState(false);
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -43,9 +48,8 @@ export default function Login() {
 
     const renderLoading = () => {
         return (
-            <div className="flex flex-col items-center justify-center">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-azulBase"></div>
-                <p className="text-legenda text-azulBase mt-2">Carregando...</p>
+            <div className="flex flex-col items-center justify-center my-50">
+                <div class="spinner" />
             </div>
         );
     };
@@ -56,14 +60,15 @@ export default function Login() {
 
         if (!email || !password) {
             setLoading(false);
-            Swal.fire({
-                icon: "error",
-                iconColor: '#991D39',
-                title: "Ops...",
-                text: "Por favor, preencha todos os campos!",
-                confirmButtonText: "Ok",
-                confirmButtonColor: "#242B63",
-            });
+            setErrorPopupOpen(true);
+            // Swal.fire({
+            //     icon: "error",
+            //     iconColor: '#991D39',
+            //     title: "Ops...",
+            //     text: "Por favor, preencha todos os campos!",
+            //     confirmButtonText: "Ok",
+            //     confirmButtonColor: "#242B63",
+            // });
             return;
         }
 
@@ -74,9 +79,8 @@ export default function Login() {
             };
 
             const response = await authenticate(data);
-            
+
             if (response && response.statusCode === 200) {
-                console.log('response:', response);
                 const token = response.data.token;
 
                 localStorage.setItem('token', token);
@@ -88,7 +92,8 @@ export default function Login() {
                     text: "Login realizado com sucesso!",
                     confirmButtonText: "Ok",
                     confirmButtonColor: "#242B63",
-                }).then((result) => {
+                })
+                .then((result) => {
                     setLoading(false);
                     if (result.isConfirmed) {
                         const decoded = jwt.decode(token);
@@ -110,14 +115,15 @@ export default function Login() {
                                 router.push(redirectPath);
                             } else {
                                 console.error('Erro na autenticação:', response);
-                                Swal.fire({
-                                    icon: "error",
-                                    iconColor: '#991D39',
-                                    title: "Ops...",
-                                    text: "Email e/ou senha incorretos!",
-                                    confirmButtonText: "Tentar novamente",
-                                    confirmButtonColor: "#242B63",
-                                });
+                                setErrorPopupOpen(true);
+                                // Swal.fire({
+                                //     icon: "error",
+                                //     iconColor: '#991D39',
+                                //     title: "Ops...",
+                                //     text: "Email e/ou senha incorretos!",
+                                //     confirmButtonText: "Tentar novamente",
+                                //     confirmButtonColor: "#242B63",
+                                // });
                             }
                         }
                     }
@@ -125,37 +131,40 @@ export default function Login() {
             } else if (!handleBack) {
                 console.error('Erro na autenticação:', response);
                 setLoading(false);
-                Swal.fire({
-                    icon: "error",
-                    iconColor: '#991D39',
-                    title: "Ops...",
-                    text: "Email e/ou senha incorretos!",
-                    confirmButtonText: "Tentar novamente",
-                    confirmButtonColor: "#242B63",
-                });
+                setErrorPopupOpen(true);
+                // Swal.fire({
+                //     icon: "error",
+                //     iconColor: '#991D39',
+                //     title: "Ops...",
+                //     text: "Email e/ou senha incorretos!",
+                //     confirmButtonText: "Tentar novamente",
+                //     confirmButtonColor: "#242B63",
+                // });
             } else {
                 console.error('Erro na autenticação:', response);
                 setLoading(false);
-                Swal.fire({
-                    icon: "error",
-                    iconColor: '#991D39',
-                    title: "Ops...",
-                    text: "Email e/ou senha incorretos!",
-                    confirmButtonText: "Tentar novamente",
-                    confirmButtonColor: "#242B63",
-                });
+                setErrorPopupOpen(true);
+                // Swal.fire({
+                //     icon: "error",
+                //     iconColor: '#991D39',
+                //     title: "Ops...",
+                //     text: "Email e/ou senha incorretos!",
+                //     confirmButtonText: "Tentar novamente",
+                //     confirmButtonColor: "#242B63",
+                // });
             }
         } catch (error) {
             console.error('Erro ao fazer requisição:', error.message);
             setLoading(false);
-            Swal.fire({
-                icon: "error",
-                iconColor: '#991D39',
-                title: "Ops...",
-                text: "Erro ao fazer requisição!",
-                confirmButtonText: "Tentar novamente",
-                confirmButtonColor: "#242B63",
-            });
+            setErrorPopupOpen(true);
+            // Swal.fire({
+            //     icon: "error",
+            //     iconColor: '#991D39',
+            //     title: "Ops...",
+            //     text: "Erro ao fazer requisição!",
+            //     confirmButtonText: "Tentar novamente",
+            //     confirmButtonColor: "#242B63",
+            // });
         }
     };
 
@@ -219,6 +228,24 @@ export default function Login() {
                     </form>
                 </div>
             </section>
+            {errorPopupOpen && (
+                <Popup isOpen={errorPopupOpen}>
+                    <Image src={iconError} />
+                    <h1 className="text-azulBase text-subtitulo font-semibold mt-15 mb-15">Algo deu errado</h1>
+                    <p className="font-semibold text-pretoTexto text-paragrafo mb-15">Email e/ou senha incorretos!</p>
+                    <div className="flex justify-center">
+                        <button onClick={() => setErrorPopupOpen(false)} className="inline-block bg-azulBase text-white rounded-10 py-5 px-15 mr-15">Tentar novamente</button>
+                    </div>
+                </Popup>
+            )}
+            {sucessPopupOpen && (
+                    <Popup isOpen={sucessPopupOpen}>
+                        <Image src={iconSucess} />
+                        <h1 className="text-azulBase text-subtitulo font-semibold mt-15 mb-15">Sucesso!</h1>
+                        <p className="font-semibold text-pretoTexto text-paragrafo mb-15">Login realizado com sucesso!</p>
+                        <button className="inline-block bg-azulBase text-white rounded-10 py-5 px-15">Ok</button>
+                    </Popup>
+                )}
         </main>
     )
 }

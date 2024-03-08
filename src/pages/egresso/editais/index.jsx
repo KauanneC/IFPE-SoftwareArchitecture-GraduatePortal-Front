@@ -15,10 +15,12 @@ import { getNotices } from '../../../../utils/apiNotices/api';
 export default function Editais() {
 
     const [editedNotices, setEditedNotices] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     React.useEffect(() => {
         getNotices().then((data) => {
             setEditedNotices(data.data);
+            setLoading(false);
         });
     }, []);
 

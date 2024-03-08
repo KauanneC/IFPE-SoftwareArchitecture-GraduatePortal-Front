@@ -20,7 +20,7 @@ import { getNotice } from "../../../../utils/apiNotice/api";
 export default function editais() {
     const [editedNotice, setEditedNotice] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    
     useEffect(() => {
         getNotice().then((data) => {
             setEditedNotice(data.data);

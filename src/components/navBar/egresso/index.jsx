@@ -8,6 +8,8 @@ import jwt from 'jsonwebtoken';
 
 import iconLogOut from '/public/icons/iconLogOut.svg'
 import profile from '/public/icons/profile.svg'
+import Popup from "@/components/popUp/popup"
+import iconAttetion from "/public/icons/iconAttetion.svg"
 
 function NavBar() {
     const router = useRouter(); // Rota atual
@@ -30,33 +32,39 @@ function NavBar() {
     }
 
     if (showAlertLogOut) {
-        Swal.fire({
-            title: 'Tem certeza?',
-            text: 'Você irá sair da sua conta',
-            icon: 'warning',
-            iconColor: '#C18031',
-            confirmButtonColor: '#991D39',
-            cancelButtonColor: '#666666',
-            confirmButtonText: 'Sim',
-            cancelButtonText: 'Não',
-            showConfirmButton: true,
-            showCancelButton: true,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                localStorage.removeItem("token");
-                console.log(localStorage);
-                window.location.href = "/";
-            } else {
-                setShowAlertLogOut(false);
-            }
-        })
+        return (
+            <>
+                {showAlertLogOut && (
+                    <Popup isOpen={showAlertLogOut} >
+                        <Image src={iconAttetion} />
+                        <h1 className="text-azulBase text-subtitulo font-semibold mt-15 mb-15">Tem certeza?</h1>
+                        <p className="font-semibold text-pretoTexto text-paragrafo mb-15">Você irá sair da sua conta</p>
+                        <div className="flex justify-center">
+                            <button className="inline-block bg-azulBase text-white rounded-10 py-5 px-15 mr-15"
+                                onClick={() => {
+                                    localStorage.removeItem("token");
+                                    console.log(localStorage);
+                                    window.location.href = "/";
+                                }}
+                            >Sim</button>
+                            <button className="inline-block bg-azulBase text-white rounded-10 py-5 px-15"
+                                onClick={() => {
+                                    setShowAlertLogOut(false);
+                                }}
+                            >Não</button>
+                        </div>
+                    </Popup >
+                    )
+                }
+            </>
+        );
     }
 
     if (showAlertProfile) {
         Swal.fire({
             title: 'Perfil',
             html: `<p>Este é o seu código de acesso: <strong>${getCode()}</strong></p><br>
-            <p>Guarde para caso precise alterar sua senha!</p>`, 
+            <p>Guarde para caso precise alterar sua senha!</p>`,
             icon: 'info',
             iconColor: '#242B63',
             confirmButtonColor: '#242B63',

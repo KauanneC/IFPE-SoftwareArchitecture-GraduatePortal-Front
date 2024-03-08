@@ -1,54 +1,91 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
+"use client"
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
-import NavAcessibilidade from '@/components/navAcessibilidade';
-import NavBar from '@/components/navBar/user';
-import Footer from '@/components/footer';
-import imgHeader from '/public/icons/imgHeader.svg';
-import CardEdital from '@/components/cardEdital';
+// Icons
+import ImgHeader from "/public/icons/imgHeader.svg";
+import noEvents from "/public/icons/noEvents.svg";
 
-import iconNoEdital from '/public/icons/iconNoEdital.svg';
+// Components
+import NavBar from '@/components/navBar/user/'
+import NavAcessibilidade from "@/components/navAcessibilidade";
+import Card from "@/components/adm/editais/card";
+import Footer from "@/components/footer";
 
-import { getNotices } from '../../../../utils/apiNotices/api';
+// API
+import { getNotice } from "../../../../utils/apiNotice/api";
 
-export default function Editais() {
+export default function editais() {
+    const [editedNotice, setEditedNotice] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const [editedNotices, setEditedNotices] = useState([]);
-
-    React.useEffect(() => {
-        getNotices().then((data) => {
-            setEditedNotices(data.data);
+    useEffect(() => {
+        getNotice().then((data) => {
+            setEditedNotice(data.data);
+            setLoading(false);
         });
     }, []);
 
+    if (!editedNotice) {
+        return (
+            <main className="flex flex-col bg-fundo w-full min-h-screen font-cabin">
+                <header>
+                    <NavAcessibilidade />
+                    <div id="navmenu">
+                        <NavBar />
+                    </div>
+                </header>
+                <section className="flex-grow">
+                    <Image className="w-full" src={ImgHeader}></Image>
+                    <div className='items-center py-8 grid'>
+                        <h1 className="font-semibold text-azulBase text-center text-tituloPrincial flex-grow">Acompanhe nossos eventos!</h1>
+                    </div>
+                    <div className="flex flex-col items-center mt-40 justify-center" id="conteudo">
+                        <Image src={noEvents} />
+                        <p className="mt-15 text-cinza05 text-tituloSessão">Não há editais no momento</p>
+                    </div>
+                </section>
+                <footer id="rodape">
+                    <Footer />
+                </footer>
+            </main>
+        )
+    }
+
     return (
-        <main>
+        <main className="flex flex-col w-full min-h-screen bg-fundo font-cabin">
             <header>
                 <NavAcessibilidade />
-                <NavBar />
-                <Image src={imgHeader} alt="Editais" className='w-screen' />
+                <div id="navmenu">
+                    <NavBar />
+                </div>
             </header>
-            <section id='conteudo' className='flex flex-col items-center justify-center mt-30 space-y-100 mx-120'>
-                <h1 className='font-semibold text-azulBase text-tituloPrincial'>Acompanhe os editais!</h1>
-                {!editedNotices ? (
-                    <div className='flex flex-col space-y-15 items-center justify-center'>
-                        <Image src={iconNoEdital} alt="Imagem de um edital" />
-                        <p className='text-pretoTexto text-tituloSessão'>No momento não há editais</p>
-                    </div>
-                ) : (
-                    <div className='grid gap-x-30 gap-y-30 grid-cols-3'>
-                        {editedNotices.map((notice, index) => (
-                            <div key={index} className='w-full'>
-                                <CardEdital
-                                    title={notice.title}
-                                    link={notice.link}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                )}
+            <section className="flex-grow">
+                <div>
+                    <Image className="w-full" src={ImgHeader}></Image>
+                </div>
+                <div className='items-center py-8 grid'>
+                    <h1 className="font-semibold text-azulBase text-center text-tituloPrincial flex-grow">Acompanhe os editais!</h1>
+                </div>
+                <div className="flex flex-row flex-wrap mx-120 gap-30 justify-center" id="conteudo">
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center my-50">
+                            <div class="spinner" />
+                        </div>
+                    ) : (
+                        editedNotice.map((notice) => (
+                            <Card
+                                key={notice.id}
+                                title={notice.title}
+                                pdfName={notice.pdfName}
+                                link={notice.link}
+                            />
+                        ))
+                    )}
+                </div>
             </section>
-            <footer>
+            <footer id="rodape">
                 <Footer />
             </footer>
         </main>

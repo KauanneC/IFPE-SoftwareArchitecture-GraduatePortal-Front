@@ -1,83 +1,99 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+"use client"
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
-import NavAcessibilidade from '@/components/navAcessibilidade';
-import NavBar from '@/components/navBar/user';
-import Footer from '@/components/footer';
-import imgHeader from '/public/icons/imgHeader.svg';
-import CardEvent from '@/components/cardEvento';
+// Components 
+import NavBar from '@/components/navBar/user/'
+import Footer from "@/components/footer";
+import NavAcessibilidade from "@/components/navAcessibilidade/index";
+import Card from "@/components/adm/eventos/card";
 
-import iconNoEvents from '/public/icons/iconNoEvents.svg';
+// Images
+import ImgHeader from "/public/icons/imgHeader.svg";
+import noEvents from "/public/icons/noEvents.svg";
 
+// API
 import { getEvents } from "../../../../utils/apiEvents/api";
 
 export default function Eventos() {
-
     const [editedEvents, setEditedEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getEvents().then((data) => {
             setEditedEvents(data.data);
+            setLoading(false);
         });
-        console.log(editedEvents);
-    });
-    
-    const [expandidoArray, setExpandidoArray] = useState(Array(editedEvents.length).fill(false));
-    
-    const handleToggleExpansao = (index) => {
-        setExpandidoArray((prevState) => {
-            const newState = [...prevState];
-            newState[index] = true;
-            return newState;
-        });
-    };
+    }, []);
 
-    const handleToggleReducao = (index) => {
-        setExpandidoArray((prevState) => {
-            const newState = [...prevState];
-            newState[index] = false;
-            return newState;
-        });
-    };
+    if (!editedEvents) {
+        return (
+            <main className="flex flex-col bg-fundo w-full min-h-screen font-cabin">
+                <header>
+                    <NavAcessibilidade />
+                    <div id="navmenu">
+                        <NavBar />
+                    </div>
+                </header>
+                <section className="flex-grow">
+                    <Image className="w-full" src={ImgHeader}></Image>
+                    <div className='items-center py-8 grid'>
+                        <h1 className="font-semibold text-azulBase text-center text-tituloPrincial flex-grow">Acompanhe nossos eventos!</h1>
+                    </div>
+                    <div className="flex flex-col items-center mt-40 justify-center" id="conteudo">
+                        <Image src={noEvents} />
+                        <p className="mt-15 text-cinza05 text-tituloSessão">Não há eventos no momento</p>
+                    </div>
+                </section>
+                <footer id="rodape">
+                    <Footer />
+                </footer>
+            </main>
+        )
+    }
 
     return (
-        <main>
+        <main className="flex flex-col bg-fundo w-full min-h-screen font-cabin">
             <header>
                 <NavAcessibilidade />
-                <NavBar />
-                <Image src={imgHeader} alt="Imagem de alunos se formando" className='w-screen' />
+                <div id="navmenu">
+                    <NavBar />
+                </div>
             </header>
-            <section id='conteudo' className='flex flex-col items-center justify-center mt-30 space-y-100 mx-120'>
-                <h1 className='font-semibold text-azulBase text-tituloPrincial'>Acompanhe nossos eventos!</h1>
-                {!editedEvents ? (
-                    <div className='flex flex-col space-y-15 items-center justify-center'>
-                        <Image src={iconNoEvents} alt="Imagem de um calendário" />
-                        <p className='text-pretoTexto text-tituloSessão'>No momento não há eventos</p>
-                    </div>
-                ) : (
-                    <div className='grid gap-x-30 gap-y-30 grid-cols-3'>
-                        {editedEvents.map((event, index) => (
-                            <div key={index} className='w-full'>
-                                <CardEvent
-                                    key={event.id}
-                                    name={event.name}
-                                    date={event.date}
-                                    hour={event.hour}
-                                    modality={event.modality}
-                                    place={event.place}
-                                    description={event.description}
-                                    expandido={expandidoArray[index]}
-                                    onToggleExpansao={() => handleToggleExpansao(index)}
-                                    onToggleReducao={() => handleToggleReducao(index)}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                )}
+            <section className="flex-grow">
+                <Image className="w-full" src={ImgHeader}></Image>
+                <div className='items-center py-8 grid'>
+                    <h1 className="font-semibold text-azulBase text-center text-tituloPrincial flex-grow">Acompanhe nossos eventos!</h1>
+                    <Link href="./form/page" className="absolute right-32">
+                        <button className="px-15 py-5 transition-transform transform hover:scale-105 border-2 border-azulBase rounded-10 text-center text-azulBase font-semibold">
+                            Editar Eventos
+                        </button>
+                    </Link>
+                </div>
+                <div className="flex flex-row flex-wrap items-start mx-120 gap-30 justify-center" id="conteudo">
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center my-50">
+                            <div class="spinner" />
+                        </div>
+                    ) : (
+                        editedEvents.map((event) => (
+                            <Card
+                                key={event.id}
+                                name={event.name}
+                                date={event.date}
+                                hour={event.hour}
+                                modality={event.modality}
+                                place={event.place}
+                                description={event.description}
+                            />
+                        ))
+                    )}
+                </div>
             </section>
-            <footer>
+            <footer id="rodape">
                 <Footer />
             </footer>
         </main>
-    );
+    )
 }
